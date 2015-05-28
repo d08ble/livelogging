@@ -25,8 +25,8 @@ var argv = require('optimist')
   })
   .argv
 
-console.log(argv._)
-console.log(argv)
+//console.log(argv._)
+//console.log(argv)
 
 if (argv._.length > 0) {
   options.datafile = argv._[0]

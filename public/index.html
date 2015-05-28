@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LiveLogging Example</title>
+    <script src="livelogging-1.0.js"></script>
+    <script>
+        window.addEventListener('load', onload)
+
+        function onload() {
+            function log(s) {
+                console.log(s)
+                document.body.innerHTML += '<div>'+s+'</div>'
+            }
+            console.log(LiveLogging)
+            var i = 0
+            setInterval(function () {
+                LiveLogging.log('LiveLogging Example/log', i)
+                LiveLogging.replace('LiveLogging Example/replace', i)
+                log('LOG TO SERVER '+ i)
+                i++
+            }, 3000)
+
+            var livelogging_port = 7089 //$("meta[name='livelogging_port']").attr('content') || 7089
+            var url = 'localhost:'+livelogging_port
+            log('CONNECTING TO '+url)
+            LiveLogging.connect(url, function () {
+                log('CONNECTED')
+            })
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

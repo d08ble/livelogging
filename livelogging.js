@@ -1,7 +1,8 @@
 // import [
 
 var _ = require('underscore'),
-  fs = require('fs')
+  fs = require('fs'),
+  WebSocketServer = require('ws').Server
 
 // import ]
 // config [
@@ -10,7 +11,10 @@ var defaultServerOptions = {
   port: 7089,
   datafile: undefined,
   logfile: undefined,
-  logToConsole: true
+  logToConsole: true,
+  queueMessagesMax: 50,
+  queueMessagesCount: 25,
+  serverFlushTimeout: 500
 }
 
 var config = {
@@ -23,13 +27,14 @@ var dataFile
 // DataFile [
 
 var DataFile = function(file) {
+  console.log("✔ datafile", file)
   this.file = file
   this.tree = {name: '-*-LiveLogging-*-', children: {}, items: []}
 
   this.flush()
 }
 
-DataFile.prototype.log = function log(path, message) {
+DataFile.prototype.log = function log(path, message, mode) {
   var words = path.split('/')
 
   var node = this.tree
@@ -39,7 +44,12 @@ DataFile.prototype.log = function log(path, message) {
 
   if (typeof message == 'object')
     message = JSON.stringify(message, null, 2);
-  node.items.push(message)
+  if (mode == 'replace') {
+    node.items = [message]
+  }
+  else {
+    node.items.push(message)
+  }
 
   this.flush() // todo: timeout
 }
@@ -70,6 +80,46 @@ function server(options) {
   config = _.extend(defaultServerOptions, options)
 
   open(config.datafile)
+
+  if (config.logToConsole)
+    console.log("✔ log to stdout")
+
+  // ws [
+  var ServerMessageLog = {}
+  var queueMessages = []
+  var timer
+
+  function flushMessages(n) {
+    var messages = queueMessages.slice(0, n)
+    queueMessages = queueMessages.slice(n)
+    var messages = _.sortBy(messages, 'time')
+    console.log(messages);
+    _.each(messages, function (m) {
+//      var filename = options.logpath+'/1.log'
+//      logString(filename, m.text)
+      logMessage(m.path, m.data, m.type == 'log' ? '' : m.type)
+    })
+  }
+
+  console.log("✔ ws server listening on port %d", config.port)
+
+  var wss = new WebSocketServer({port: config.port});
+
+  wss.on('connection', function(ws) {
+    ws.on('message', function(message) {
+      queueMessages.push(message)
+      if (queueMessages.length > config.queueMessagesMax)
+        flushMessages(config.flushMessagesCount)
+
+      if (logTimer)
+        clearTimeout(logTimer)
+      logTimer = setTimeout(function () {
+        logTimer = null
+        flushMessages(queueMessages.length)
+      }, config.serverFlushTimeout)
+    })
+  })
+  // ws ]
 }
 
 // server ]
@@ -97,20 +147,30 @@ function open(file) {
 }
 
 // local open datafile ]
+// logMessage [
+
+function logMessage(path, message, mode) {
+  if (config.logToConsole) {
+    console.log(mode ? '['+mode+']' : '', path, message)
+  }
+  if (dataFile) {
+    dataFile.log(path, message, mode)
+  }
+}
+
+// logMessage ]
 // log function [
 
 function log(path, message) {
-  if (config.logToConsole)
-    console.log(path, message)
-  if (dataFile) {
-    dataFile.log(path, message)
-  }
+  logMessage(path, message)
 }
 
 // log function ]
 // replace function [
 
-
+function replace(path, message) {
+  logMessage(path, message, 'replace')
+}
 
 // replace function ]
 // module.exports [

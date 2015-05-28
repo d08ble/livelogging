@@ -186,8 +186,8 @@ module.exports = {
   open: open,
   log: log,
 
-  status: status,
-  config: config
+  status: function () {return status},
+  config: function () {return config}
 }
 
 // module.exports ]

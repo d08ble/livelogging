@@ -52,5 +52,5 @@ if (argv.client) {
 
 var livelog = LiveLogging.log
 
-livelog('LiveLogging/Status', LiveLogging.status)
-livelog('LiveLogging/Config', LiveLogging.config)
+livelog('LiveLogging/Status', LiveLogging.status())
+livelog('LiveLogging/Config', LiveLogging.config())

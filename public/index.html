@@ -21,7 +21,7 @@
             }, 3000)
 
             var livelogging_port = 7089 //$("meta[name='livelogging_port']").attr('content') || 7089
-            var url = 'localhost:'+livelogging_port
+            var url = 'ws://localhost:'+livelogging_port
             log('CONNECTING TO '+url)
             LiveLogging.connect(url, function () {
                 log('CONNECTED')

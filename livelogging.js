@@ -106,15 +106,16 @@ function server(options) {
   var wss = new WebSocketServer({port: config.port});
 
   wss.on('connection', function(ws) {
-    ws.on('message', function(message) {
+    ws.on('message', function(m) {
+      var message = JSON.parse(m)
       queueMessages.push(message)
       if (queueMessages.length > config.queueMessagesMax)
         flushMessages(config.flushMessagesCount)
 
-      if (logTimer)
-        clearTimeout(logTimer)
-      logTimer = setTimeout(function () {
-        logTimer = null
+      if (timer)
+        clearTimeout(timer)
+      timer = setTimeout(function () {
+        timer = null
         flushMessages(queueMessages.length)
       }, config.serverFlushTimeout)
     })
@@ -139,9 +140,11 @@ function open(file) {
     config.logToConsole = true
     return
   }
-  if (fs.exists(file)) {
-    var suffix = (new Date()).toJSON()
-    console.log(file+suffix)
+  if (fs.existsSync(file)) {
+    var suffix = (new Date()).toJSON()//(new Date()).getTime()
+    var newfile = file+'.'+suffix
+    console.log('Move datafile to', newfile)
+    fs.renameSync(file, newfile)
   }
   dataFile = new DataFile(file)
 }

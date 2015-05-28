@@ -1,6 +1,6 @@
 {
   "name": "livelogging",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "LiveLogging for LiveComment",
   "main": "livelogging.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "underscore": "^1.8.3",
     "optimist": "^0.6.1",
-    "ws": "^0.7.2"
+    "ws": "^0.7.2",
+    "dateformat": "^1.0.11"
   }
 }

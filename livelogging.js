@@ -1,6 +1,7 @@
 // import [
 
 var _ = require('underscore'),
+  dateFormat = require('dateformat'),
   fs = require('fs'),
   WebSocketServer = require('ws').Server
 
@@ -34,7 +35,7 @@ var DataFile = function(file) {
   this.flush()
 }
 
-DataFile.prototype.log = function log(path, message, mode) {
+DataFile.prototype.log = function log(time, path, message, mode) {
   var words = path.split('/')
 
   var node = this.tree
@@ -44,6 +45,7 @@ DataFile.prototype.log = function log(path, message, mode) {
 
   if (typeof message == 'object')
     message = JSON.stringify(message, null, 2);
+  message = '|' + dateFormat(time, "yyyy-mm-dd HH:MM:ss.l") + '| ' + message
   if (mode == 'replace') {
     node.items = [message]
   }
@@ -97,7 +99,7 @@ function server(options) {
     _.each(messages, function (m) {
 //      var filename = options.logpath+'/1.log'
 //      logString(filename, m.text)
-      logMessage(m.path, m.data, m.type == 'log' ? '' : m.type)
+      logMessage(new Date(m.time), m.path, m.data, m.type == 'log' ? '' : m.type)
     })
   }
 
@@ -152,12 +154,12 @@ function open(file) {
 // local open datafile ]
 // logMessage [
 
-function logMessage(path, message, mode) {
+function logMessage(time, path, message, mode) {
   if (config.logToConsole) {
     console.log(mode ? '['+mode+']' : '', path, message)
   }
   if (dataFile) {
-    dataFile.log(path, message, mode)
+    dataFile.log(time, path, message, mode)
   }
 }
 
@@ -165,14 +167,14 @@ function logMessage(path, message, mode) {
 // log function [
 
 function log(path, message) {
-  logMessage(path, message)
+  logMessage(new Date(), path, message)
 }
 
 // log function ]
 // replace function [
 
 function replace(path, message) {
-  logMessage(path, message, 'replace')
+  logMessage(new Date(), path, message, 'replace')
 }
 
 // replace function ]

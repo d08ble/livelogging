@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+var LiveLogging = require('../livelogging')
+
+var options = {
+
+}
+
+var optimist = require('optimist')
+
+var argv = require('optimist')
+  .usage('$0 [datafile] [--logfile <file>] [--stdout] # logging\n' +
+    '$0 <datafile> --server [--port <port>] # server\n' +
+    '$0 --client <url> # client')
+  .describe({
+    'server': 'Start server',
+    'port': 'Server port (default: 7089)',
+    'client': 'Connect to <url>',
+    'stdout': 'Log messages to stdout (default: off)',
+    'logfile': 'Log messages to <file>'
+  })
+  .check(function (argv) {
+    if (argv.help) //(argv._.length == 0 && !argv.client)
+        throw ''
+  })
+  .argv
+
+console.log(argv._)
+console.log(argv)
+
+if (argv._.length > 0) {
+  options.datafile = argv._[0]
+  options.logToConsole = false
+}
+if (argv.stdout) {
+  options.logToConsole = true
+}
+if (argv.logfile) {
+  options.logfile = argv.logfile
+}
+if (argv.port) {
+  options.port = argv.port
+}
+
+if (argv.server) {
+  LiveLogging.server(options)
+}
+
+if (argv.client) {
+  LiveLogging.client(options)
+}
+
+var livelog = LiveLogging.log
+
+livelog('LiveLogging/Status', LiveLogging.status)
+livelog('LiveLogging/Config', LiveLogging.config)

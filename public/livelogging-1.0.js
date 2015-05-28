@@ -1,7 +1,7 @@
 (function() {
   var ws
   var connected = false
-  var queueMax = 1
+  var queueMax = 1000
   var queueMessages = []
   var messagesLost = 0
   var reconnectionTimeout = 1000

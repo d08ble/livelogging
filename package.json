@@ -1,6 +1,6 @@
 {
   "name": "livelogging",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "LiveLogging for LiveComment",
   "main": "livelogging.js",
   "scripts": {

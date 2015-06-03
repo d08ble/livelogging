@@ -185,6 +185,7 @@ module.exports = {
   client: client,
   open: open,
   log: log,
+  replace: replace,
 
   status: function () {return status},
   config: function () {return config}

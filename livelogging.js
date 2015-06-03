@@ -44,7 +44,7 @@ DataFile.prototype.log = function log(time, path, message, mode) {
   })
 
   if (typeof message == 'object')
-    message = JSON.stringify(message, null, 2).replace('[\n', '[ #\n').replace(']\n', '] #\n');
+    message = JSON.stringify(message, null, 2).replace('[\n', '[ #\n').replace(']\n', '] #\n').replace(/.*]$/, '] #')
   message = '|' + dateFormat(time, "yyyy-mm-dd HH:MM:ss.l") + '| ' + message
   if (mode == 'replace') {
     node.items = [message]

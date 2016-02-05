@@ -9,7 +9,7 @@ var options = {
 var optimist = require('optimist')
 
 var argv = require('optimist')
-  .usage('$0 [datafile] [--logfile <file>] [--stdout] # logging\n' +
+  .usage('$0 [datafile] [--logfile <file>] [--stdout] [--commentPrefix=<prefix>] # logging\n' +
     '$0 <datafile> --server [--port <port>] # server\n' +
     '$0 --client <url> # client')
   .describe({
@@ -17,7 +17,8 @@ var argv = require('optimist')
     'port': 'Server port (default: 7089)',
     'client': 'Connect to <url>',
     'stdout': 'Log messages to stdout (default: off)',
-    'logfile': 'Log messages to <file>'
+    'logfile': 'Log messages to <file>',
+    'commentPrefix': 'comment prefix # // /* etc'
   })
   .check(function (argv) {
     if (argv.help) //(argv._.length == 0 && !argv.client)
@@ -40,6 +41,9 @@ if (argv.logfile) {
 }
 if (argv.port) {
   options.port = argv.port
+}
+if (argv.commentPrefix) {
+  options.commentPrefix = argv.commentPrefix
 }
 
 if (argv.server) {

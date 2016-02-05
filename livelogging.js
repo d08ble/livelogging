@@ -10,6 +10,7 @@ var _ = require('underscore'),
 
 var defaultServerOptions = {
   port: 7089,
+  commentPrefix: '',
   datafile: undefined,
   logfile: undefined,
   logToConsole: true,
@@ -59,15 +60,16 @@ DataFile.prototype.log = function log(time, path, message, mode) {
 
 DataFile.prototype.flush = function flush() {
   var s = ''
+  var prefix = config.commentPrefix != '' ? config.commentPrefix + ' ' : ''
   function recursive(node) {
     if (node) {
-      s += node.name + '[\n'
+      s += prefix + node.name + '[\n'
       if (node.items.length)
         s += node.items.join('\n') + '\n'
       for (var i in node.children) {
         recursive(node.children[i])
       }
-      s += node.name + ']\n'
+      s += prefix + node.name + ']\n'
     }
   }
   recursive(this.tree)

@@ -20,6 +20,20 @@ var options = {
     port: 7089
 }
 
+// A. Run server
+
+LiveLogging.server(options)
+
+// B. Open file, no server
+
+LiveLogging.open(options.datafile)
+
+// LiveLog message to path
+
+LiveLogging.log('path', 'message')
+LiveLogging.replace('path', 'message')
+LiveLogging.erase('path')
+
 ```
 
 #### Usage Browser

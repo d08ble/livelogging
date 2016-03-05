@@ -36,27 +36,57 @@ var DataFile = function(file) {
   this.flush()
 }
 
+// log [
+
 DataFile.prototype.log = function log(time, path, message, mode) {
   var words = path.split('/')
 
-  var node = this.tree
-  _.each(words, function (word) {
-    node = node.children[word] || (node.children[word] = {name: word, children: {}, items: []})
-  })
+  if (mode == 'erase') {
 
-  if (typeof message == 'object')
-    message = JSON.stringify(message, null, 2)
-  message = ""+message
-  message = '|' + dateFormat(time, "yyyy-mm-dd HH:MM:ss.l") + '| ' + message.replace(/\]\n/g, '] #\n').replace(/\[\n/g, '[ #\n')
-  if (mode == 'replace') {
-    node.items = [message]
+    // erase [
+
+    var node = this.tree
+    var parent
+    _.each(words, function (word) {
+      parent = node
+      node = node && node.children[word]
+    })
+    if (node && parent) {
+      var name = words[words.length - 1]
+      delete parent.children[name]
+    }
+
+    // erase ]
+
   }
   else {
-    node.items.push(message)
+
+    // log/replace [
+
+    var node = this.tree
+    _.each(words, function (word) {
+      node = node.children[word] || (node.children[word] = {name: word, children: {}, items: []})
+    })
+
+    if (typeof message == 'object')
+      message = JSON.stringify(message, null, 2)
+    message = ""+message
+    message = '|' + dateFormat(time, "yyyy-mm-dd HH:MM:ss.l") + '| ' + message.replace(/\]\n/g, '] #\n').replace(/\[\n/g, '[ #\n')
+    if (mode == 'replace') {
+      node.items = [message]
+    }
+    else {
+      node.items.push(message)
+    }
+
+    // log/replace ]
+
   }
 
   this.flush() // todo: timeout
 }
+
+// log ]
 
 DataFile.prototype.flush = function flush() {
   var s = ''
@@ -181,6 +211,13 @@ function replace(path, message) {
 }
 
 // replace function ]
+// erase function [
+
+function erase(path) {
+  logMessage(new Date(), path, null, 'erase')
+}
+
+// erase function ]
 // module.exports [
 
 module.exports = {

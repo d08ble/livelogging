@@ -60,6 +60,9 @@
     },
     replace: function replace(path, message) {
       send(path, message, 'replace')
+    },
+    erase: function erase(path) {
+      send(path, null, 'erase')
     }
   }
 }).call(this)

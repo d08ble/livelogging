@@ -11,7 +11,7 @@ erase(path)
 #### Usage NodeJS
 
 ```
-var LiveLogging = require('../livelogging')
+var LiveLogging = require('livelogging')
 
 var options = {
     datafile: '1.log',

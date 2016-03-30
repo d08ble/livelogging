@@ -226,6 +226,7 @@ module.exports = {
   open: open,
   log: log,
   replace: replace,
+  erase: erase,
 
   status: function () {return status},
   config: function () {return config}

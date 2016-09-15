@@ -16,7 +16,9 @@ var defaultServerOptions = {
   logToConsole: true,
   queueMessagesMax: 50,
   queueMessagesCount: 25,
-  serverFlushTimeout: 500
+  serverFlushTimeout: 500,
+  dataFileFlushTimeout: 100,
+  dataFileFlushQueueMessagesMax: 100000
 }
 
 var config = {
@@ -33,6 +35,7 @@ var DataFile = function(file) {
   this.file = file
   this.tree = {name: '-*-LiveLogging-*-', children: {}, items: []}
 
+  this.queueMessagesCount = 0
   this.flush()
 }
 
@@ -83,10 +86,28 @@ DataFile.prototype.log = function log(time, path, message, mode) {
 
   }
 
-  this.flush() // todo: timeout
+  // flush by timeout [
+
+  if (this.timer) {
+    clearTimeout(this.timer)
+    this.timer = null
+
+    this.queueMessagesCount++
+    if (this.queueMessagesCount >= config.dataFileFlushQueueMessagesMax) {
+      this.flush()
+      return
+    }
+  }
+  this.timer = setTimeout(function () {
+    this.timer = null
+    this.flush()
+  }.bind(this), config.dataFileFlushTimeout)
+
+  // flush by timeout ]
 }
 
 // log ]
+// flush [
 
 DataFile.prototype.flush = function flush() {
   var s = ''
@@ -105,8 +126,11 @@ DataFile.prototype.flush = function flush() {
   recursive(this.tree)
 
   fs.writeFileSync(this.file, s)
+
+  this.queueMessagesCount = 0
 }
 
+// flush ]
 // DataFile ]
 // server [
 

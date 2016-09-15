@@ -15,7 +15,7 @@ var defaultServerOptions = {
   logfile: undefined,
   logToConsole: true,
   queueMessagesMax: 50,
-  queueMessagesCount: 25,
+  flushMessagesCount: 25,
   serverFlushTimeout: 500,
   dataFileFlushTimeout: 100,
   dataFileFlushQueueMessagesMax: 100000
@@ -149,10 +149,10 @@ function server(options) {
   var timer
 
   function flushMessages(n) {
+    queueMessages = _.sortBy(queueMessages, 'time')
     var messages = queueMessages.slice(0, n)
     queueMessages = queueMessages.slice(n)
-    var messages = _.sortBy(messages, 'time')
-    console.log(messages);
+//    console.log(messages);
     _.each(messages, function (m) {
 //      var filename = options.logpath+'/1.log'
 //      logString(filename, m.text)

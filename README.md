@@ -78,7 +78,7 @@ See like that logs/1.log
   "datafile": "logs/1.log",
   "logToConsole": false,
   "queueMessagesMax": 50,
-  "queueMessagesCount": 25,
+  "flushMessagesCount": 25,
   "serverFlushTimeout": 500,
   "dataFileFlushTimeout": 100,
   "dataFileFlushQueueMessagesMax": 100000

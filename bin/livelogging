@@ -3,10 +3,7 @@
 var LiveLogging = require('../livelogging')
 
 var options = {
-
 }
-
-var optimist = require('optimist')
 
 var argv = require('optimist')
   .usage('$0 [datafile] [--logfile <file>] [--stdout] [--commentPrefix=<prefix>] # logging\n' +
